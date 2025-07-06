@@ -34,7 +34,11 @@ func main() {
 		router.GET("/genders", controller.ListGenders)
 
 		router.POST("/work", controller.CreateWork)
+		router.GET("/work", controller.GetAllWork)
+		router.GET("/work/:id", controller.GetAllWork)
 		router.PATCH("/work/:id", controller.UpdateWork)
+		router.DELETE("/work/:id", controller.DeleteWork)
+
 	}
 	r.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "API RUNNING... PORT: %s", PORT)

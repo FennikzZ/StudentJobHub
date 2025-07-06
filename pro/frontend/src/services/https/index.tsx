@@ -77,7 +77,6 @@ async function GetUserById(id: Number | undefined) {
   return res;
 }
 
-
 async function CreateUser(data: UsersInterface) {
   const requestOptions = {
     method: "POST",
@@ -136,6 +135,79 @@ async function CreateWork(data: WorkInterface) {
   return res;
 }
 
+async function GetWork() {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  let res = await fetch(`${apiUrl}/work`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function GetWorkById(id: Number | undefined) {
+  const requestOptions = {
+    method: "GET"
+  };
+
+  let res = await fetch(`${apiUrl}/work/${id}`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function UpdateWork(data: UsersInterface) {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  };
+
+  let res = await fetch(`${apiUrl}/work`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function DeleteWorkByID(id: Number | undefined) {
+  const requestOptions = {
+    method: "DELETE"
+  };
+
+  let res = await fetch(`${apiUrl}/work/${id}`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
 export {
   GetUsers,
   CreateUser,
@@ -143,5 +215,9 @@ export {
   DeleteUserByID,
   GetUserById,
   UpdateUser,
-  CreateWork
+  CreateWork,
+  GetWork,
+  GetWorkById,
+  UpdateWork,
+  DeleteWorkByID,
 };

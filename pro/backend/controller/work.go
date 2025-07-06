@@ -96,7 +96,7 @@ func DeleteWork(c *gin.Context) {
 	db := config.DB()
 
 	// ลบโปรโมชั่นจากฐานข้อมูล
-	if tx := db.Exec("DELETE FROM work WHERE id = ?", id); tx.RowsAffected == 0 {
+	if tx := db.Exec("DELETE FROM works WHERE id = ?", id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Work not found"})
 		return
 	}

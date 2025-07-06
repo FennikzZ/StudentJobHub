@@ -1,0 +1,69 @@
+/* Sidebar styles */
+.admin .sider {
+    height: 100vh;
+    background-color: #3F72AF;
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .admin   .logo {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    font-size: 22px;
+    transition: all 0.3s;
+  }
+  
+  .admin   .logo-collapsed {
+    font-size: 16px;
+  }
+  
+  .admin   .logo-circle {
+    background: #fff;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    transition: all 0.3s;
+  }
+  
+  .admin .logo-circle-collapsed {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .admin   .menu {
+    background-color: transparent;
+    font-weight: bold;
+  }
+  
+  .admin  .menu-item {
+    font-size: 16px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    font-weight: bold;
+    transition: all 0.3s;
+    color: #000;
+  }
+  
+  .admin   .menu-item-collapsed {
+    justify-content: center;
+    padding-left: 50;
+  }
+  
+  .admin  .menu-item-logout {
+    color: #ff4d4f;
+  }
+  
+  .admin .icon-style {
+    font-size: 60px; /* ขนาดไอคอนในเมนูปกติ */
+    margin-right: 10px;
+  }
+  
+  .admin .icon-style-collapsed {
+    font-size: 30px; /* ขนาดไอคอนเมื่อเมนูถูกย่อ */
+    margin-right: 0;
+  }
+  

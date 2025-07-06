@@ -1,6 +1,8 @@
 import { Col, Row, Card, Input, Select } from "antd";
 import "./home.css";
 
+import Navbar from "../../components/Navbar/Navbar"; // ✅ เพิ่มตรงนี้
+
 import bannerImage from "../../assets/banner.png";
 import photoasa from "../../assets/asa.jpg";
 import photoint from "../../assets/int.jpg";
@@ -14,6 +16,8 @@ export default function Dashboard() {
 
   return (
     <>
+      <Navbar /> {/* ✅ แสดง Navbar ด้านบนสุด */}
+      
       <Row gutter={[16, 16]}>
         {/* --- Banner ที่มี Search --- */}
         <Col xs={24}>

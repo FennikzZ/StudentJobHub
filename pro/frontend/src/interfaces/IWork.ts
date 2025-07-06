@@ -10,4 +10,6 @@ export interface WorkInterface {
     photo?: string;
     paid?: number | null;       // กรณีเป็นงานแบบ Paid
     volunteer?: number | null;  // กรณีเป็นงานจิตอาสา
+    workstatus_id?: number;
+    worktype_id?: number;
 }
