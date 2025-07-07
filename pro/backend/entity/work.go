@@ -14,6 +14,7 @@ type Work struct {
 	Latitude    float64   `json:"latitude"`
 	Longitude   float64   `json:"longitude"`
 	WorkCount   int       `json:"workcount"`
+	WorkUse  	int       `json:"workuse"`
 	WorkTime    time.Time `json:"worktime"`
 	Photo       string    `gorm:"type:longtext" json:"photo"`
 	Paid        *int      `json:"paid"`

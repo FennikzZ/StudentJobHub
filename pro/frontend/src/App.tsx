@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import Work from "./pages/work";
 import WorkCreate from "./pages/work/create";
 import WorkEdit from "./pages/work/edit";
+import WorkView from "./pages/work/view";
 import Dashboard from "./pages/dashboard";
 import Account from "./pages/account";
 import AccountrCreate from "./pages/account/create";
@@ -30,6 +31,7 @@ const App: React.FC = () => {
             <Route path="/work" element={<Work />} />
             <Route path="/work/create" element={<WorkCreate />} />
             <Route path="/work/edit/:id" element={<WorkEdit />} />
+            <Route path="/work/view" element={<WorkView />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/account" element={<Account />} />
             <Route path="/account/create" element={<AccountrCreate />} />

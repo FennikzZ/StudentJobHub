@@ -5,6 +5,7 @@ export interface WorkInterface {
     place?: string;
     latitude?: number;
     longitude?: number;
+    workuse?: number;
     workcount?: number;
     worktime?: string;
     photo?: string;

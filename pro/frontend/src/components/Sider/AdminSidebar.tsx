@@ -19,6 +19,7 @@ type CustomMenuItem = {
 const items: CustomMenuItem[] = [
   { key: "/work", label: "งานทั้งหมด", icon: <DashboardOutlined />, className: "menu-work" },
   { key: "/dashboard", label: "แดชบอร์ด", icon: <UserOutlined />, className: "menu-dashboard" },
+  { key: "/", label: "ออกจากระบบ", icon: <UserOutlined />, className: "menu-logout" },
 ];
 
 const AdminSidebar: React.FC = () => {

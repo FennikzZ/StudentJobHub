@@ -11,12 +11,12 @@ import photopart from "../../assets/part.jpg";
 const { Search } = Input;
 const { Option } = Select;
 
-export default function Dashboard() {
+export default function Home() {
   const bannerHeight = 300;
 
   return (
     <>
-      <Navbar /> {/* ✅ แสดง Navbar ด้านบนสุด */}
+      <Navbar /> 
       
       <Row gutter={[16, 16]}>
         {/* --- Banner ที่มี Search --- */}
@@ -36,7 +36,7 @@ export default function Dashboard() {
             >
               <img
                 src={bannerImage}
-                alt="Dashboard Banner"
+                alt="Home Banner"
                 style={{
                   width: "100%",
                   height: "100%",
