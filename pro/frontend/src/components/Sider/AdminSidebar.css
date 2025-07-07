@@ -1,69 +1,83 @@
-/* Sidebar styles */
+/* AdminSidebar.css */
 .admin .sider {
-    height: 100vh;
-    background-color: #3F72AF;
-    color: #fff;
-    transition: all 0.3s ease-in-out;
-  }
-  
-  .admin   .logo {
-    text-align: center;
-    padding: 20px;
-    color: #fff;
-    font-size: 22px;
-    transition: all 0.3s;
-  }
-  
-  .admin   .logo-collapsed {
-    font-size: 16px;
-  }
-  
-  .admin   .logo-circle {
-    background: #fff;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 0 auto 10px;
-    transition: all 0.3s;
-  }
-  
-  .admin .logo-circle-collapsed {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .admin   .menu {
-    background-color: transparent;
-    font-weight: bold;
-  }
-  
-  .admin  .menu-item {
-    font-size: 16px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    font-weight: bold;
-    transition: all 0.3s;
-    color: #000;
-  }
-  
-  .admin   .menu-item-collapsed {
-    justify-content: center;
-    padding-left: 50;
-  }
-  
-  .admin  .menu-item-logout {
-    color: #ff4d4f;
-  }
-  
-  .admin .icon-style {
-    font-size: 60px; /* ขนาดไอคอนในเมนูปกติ */
-    margin-right: 10px;
-  }
-  
-  .admin .icon-style-collapsed {
-    font-size: 30px; /* ขนาดไอคอนเมื่อเมนูถูกย่อ */
-    margin-right: 0;
-  }
-  
+  height: 100vh;
+  background-color: #112D4E;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.admin .logo {
+  text-align: center;
+  padding: 30px 0 10px;
+  color: #fff;
+  font-size: 22px;
+}
+
+.admin .logo-circle {
+  background: #3F72AF;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin .logo-initial {
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+}
+
+.admin .logo-text {
+  color: #F9F7F7;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.admin .menu {
+  background-color: transparent;
+  font-weight: bold;
+  color: #F9F7F7;
+}
+
+.admin .menu-item {
+  font-size: 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  transition: all 0.3s;
+  color: #DBE2EF;
+}
+
+.admin .menu-item:hover {
+  background-color: #3F72AF !important;
+  color: #ffffff !important;
+}
+
+.admin .menu-item.ant-menu-item-selected {
+  background-color: #F9F7F7 !important;
+  color: #112D4E !important;
+  font-weight: bold;
+  border-left: 5px solid #3F72AF;
+}
+
+.admin .icon-style {
+  font-size: 20px;
+  margin-right: 10px;
+  color: inherit;
+}
+
+.admin .menu-work {
+  font-size: 18px;
+  color: #F6F8D5;
+}
+
+.admin .menu-dashboard {
+  font-size: 18px;
+  color: #DBE2EF;
+}

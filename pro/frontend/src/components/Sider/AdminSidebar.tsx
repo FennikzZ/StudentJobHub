@@ -17,8 +17,8 @@ type CustomMenuItem = {
 };
 
 const items: CustomMenuItem[] = [
-  { key: "/work", label: "WORK", icon: <DashboardOutlined /> },
-  { key: "/dashboard", label: "DASHBOARD", icon: <UserOutlined /> },
+  { key: "/work", label: "งานทั้งหมด", icon: <DashboardOutlined />, className: "menu-work" },
+  { key: "/dashboard", label: "แดชบอร์ด", icon: <UserOutlined />, className: "menu-dashboard" },
 ];
 
 const AdminSidebar: React.FC = () => {
@@ -36,14 +36,12 @@ const AdminSidebar: React.FC = () => {
 
   return (
     <div className="admin">
-      <Sider
-        width={250}
-        className="sider"
-        theme="light"
-      >
+      <Sider width={250} className="sider" theme="light">
         <div className="logo">
-          <div className="logo-circle" />
-          <span className="logo-text">SUT</span>
+          <div className="logo-circle">
+            <span className="logo-initial">S</span>
+          </div>
+          <span className="logo-text">Student Job Hub</span>
         </div>
 
         <Menu
