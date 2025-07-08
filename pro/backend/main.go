@@ -32,12 +32,18 @@ func main() {
 		router.DELETE("/users/:id", controller.DeleteUser)
 		// Gender Routes
 		router.GET("/genders", controller.ListGenders)
-
+		//work
 		router.POST("/work", controller.CreateWork)
 		router.GET("/work", controller.GetAllWork)
 		router.GET("/work/:id", controller.GetWork)
 		router.PATCH("/work", controller.UpdateWork)
 		router.DELETE("/work/:id", controller.DeleteWork)
+		//dashboard
+		router.POST("/dashboard", controller.CreateDashboard)
+		router.GET("/dashboard", controller.GetAllDashboard)
+		router.GET("/dashboard/:id", controller.GetDashboard)
+		router.PATCH("/dashboard", controller.UpdateDashboard)
+		router.DELETE("/dashboard/:id", controller.DeleteDashboard)
 
 	}
 	r.GET("/", func(c *gin.Context) {

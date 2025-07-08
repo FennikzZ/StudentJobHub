@@ -7,7 +7,12 @@ import Work from "./pages/work";
 import WorkCreate from "./pages/work/create";
 import WorkEdit from "./pages/work/edit";
 import WorkView from "./pages/work/view";
+
 import Dashboard from "./pages/dashboard";
+import DashboardCreate from "./pages/dashboard/create";
+import DashboardEdit from "./pages/dashboard/edit";
+import DashboardView from "./pages/dashboard/view";
+
 import Account from "./pages/account";
 import AccountrCreate from "./pages/account/create";
 import AccountEdit from "./pages/account/edit";
@@ -32,7 +37,12 @@ const App: React.FC = () => {
             <Route path="/work/create" element={<WorkCreate />} />
             <Route path="/work/edit/:id" element={<WorkEdit />} />
             <Route path="/work/view" element={<WorkView />} />
+            
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/create" element={<DashboardCreate />} />
+            <Route path="/dashboard/edit/:id" element={<DashboardEdit />} />
+            <Route path="/dashboard/view" element={<DashboardView />} />
+
             <Route path="/account" element={<Account />} />
             <Route path="/account/create" element={<AccountrCreate />} />
             <Route path="/account/edit/:id" element={<AccountEdit />} />

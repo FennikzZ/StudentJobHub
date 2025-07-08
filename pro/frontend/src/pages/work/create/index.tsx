@@ -38,7 +38,7 @@ const LocationPicker = ({ onSelect }: { onSelect: (lat: number, lng: number) => 
   return null;
 };
 
-const WorkCreate = () => {
+const WorkEdit = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -150,12 +150,12 @@ const WorkCreate = () => {
                 <Col xs={24} md={14}>
                   <Row gutter={[16, 16]}>
                     <Col span={12}>
-                      <Form.Item name="title" label="หัวข้องาน" rules={[{ required: true }]}>
+                      <Form.Item name="title" label="หัวข้องาน" rules={[{ required: true, message: "กรุณากรอกหัวข้องาน" }]}>
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item name="WorkStatusID" label="สถานะงาน" rules={[{ required: true }]}>
+                      <Form.Item name="WorkStatusID" label="สถานะงาน" rules={[{ required: true, message: "กรุณากรอกสถานะงาน" }]}>
                         <Select placeholder="เลือกสถานะ">
                           <Option value={1}>เปิดรับสมัคร</Option>
                           <Option value={2}>ปิดรับสมัคร</Option>
@@ -163,18 +163,18 @@ const WorkCreate = () => {
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item name="workcount" label="จำนวนคนที่ต้องการ" rules={[{ required: true }]}>
+                      <Form.Item name="workcount" label="จำนวนคนที่ต้องการ" rules={[{ required: true, message: "กรุณากรอกจำนวนคน" }]}>
                         <InputNumber min={1} style={{ width: "100%" }} />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item name="place" label="สถานที่จัดงาน" rules={[{ required: true }]}>
+                      <Form.Item name="place" label="สถานที่จัดงาน" rules={[{ required: true, message: "กรุณากรอกสถานที่จัดงาน" }]}>
                         <Input />
                       </Form.Item>
                     </Col>
 
                     <Col span={12}>
-                      <Form.Item name="WorkTypeID" label="ประเภทงาน" rules={[{ required: true }]}>
+                      <Form.Item name="WorkTypeID" label="ประเภทงาน" rules={[{ required: true, message: "กรุณากรอกประเภทงาน" }]}>
                         <Select onChange={(value) => setWorkTypeID(value)}>
                           <Option value={1}>มีค่าตอบแทน</Option>
                           <Option value={2}>จิตอาสา</Option>
@@ -183,20 +183,20 @@ const WorkCreate = () => {
                     </Col>
                     {workTypeID === 1 && (
                       <Col span={12}>
-                        <Form.Item name="paid" label="ค่าตอบแทน (บาท)" rules={[{ required: true }]}>
+                        <Form.Item name="paid" label="ค่าตอบแทน (บาท)" rules={[{ required: true, message: "กรุณากรอกค่าตอบแทน" }]}>
                           <InputNumber style={{ width: "100%" }} />
                         </Form.Item>
                       </Col>
                     )}
                     {workTypeID === 2 && (
                       <Col span={12}>
-                        <Form.Item name="volunteer" label="จำนวนชั่วโมงจิตอาสา" rules={[{ required: true }]}>
+                        <Form.Item name="volunteer" label="จำนวนชั่วโมงจิตอาสา" rules={[{ required: true, message: "กรุณากรอกชั่วโมงจิตอาสา" }]}>
                           <InputNumber style={{ width: "100%" }} />
                         </Form.Item>
                       </Col>
                     )}
                     <Col span={24}>
-                      <Form.Item name="worktime" label="วันและเวลาทำงาน" rules={[{ required: true }]}>
+                      <Form.Item name="worktime" label="วันและเวลาทำงาน" rules={[{ required: true, message: "กรุณากรอกวันและเวลางาน" }]}>
                         <DatePicker
                           showTime
                           style={{ width: "100%" }}
@@ -205,7 +205,7 @@ const WorkCreate = () => {
                       </Form.Item>
                     </Col>
                     <Col span={20}>
-                      <Form.Item name="description" label="รายละเอียดงาน" rules={[{ required: true }]}>
+                      <Form.Item name="description" label="รายละเอียดงาน" rules={[{ required: true, message: "กรุณากรอกรายละเอียดงาน" }]}>
                         <Input.TextArea rows={4} />
                       </Form.Item>
                     </Col>
@@ -215,7 +215,7 @@ const WorkCreate = () => {
                         label="รูปภาพ"
                         valuePropName="fileList"
                         getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
-                        rules={[{ required: true, message: "กรุณาอัปโหลดรูปภาพ" }]}
+                        rules={[{ required: true, message: "กรุณาอัปโหลดรูป" }]}
                       >
                         <ImgCrop rotationSlider>
                           <Upload
@@ -292,4 +292,4 @@ const WorkCreate = () => {
   );
 };
 
-export default WorkCreate;
+export default WorkEdit;

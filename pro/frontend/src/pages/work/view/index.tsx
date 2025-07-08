@@ -1,42 +1,44 @@
 import { useEffect, useState } from "react";
 import {
-    Card,
-    Col,
-    Row,
-    Typography,
     Layout,
-    message,
-    Tag,
+    Row,
+    Col,
+    Card,
+    Typography,
     Input,
     Select,
-    Modal,
+    Tag,
+    message,
     Button,
+    Pagination,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../../components/Navbar/Navbar";
+import { GetWork } from "../../../services/https";
 import { WorkInterface } from "../../../interfaces/IWork";
-import { GetWork } from "../../../services/https/index";
-import bannerImage from "../../../assets/banner.png";
+import bannerImage from "../../../assets/bannerblue.png";
 
-const { Title, Paragraph } = Typography;
 const { Content } = Layout;
+const { Title, Paragraph, Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
 const WorkView = () => {
     const [works, setWorks] = useState<WorkInterface[]>([]);
+    const [selectedWork, setSelectedWork] = useState<WorkInterface | null>(null);
     const [searchText, setSearchText] = useState("");
     const [filterType, setFilterType] = useState("");
     const [filterStatus, setFilterStatus] = useState("");
-    const [selectedWork, setSelectedWork] = useState<WorkInterface | null>(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
     const navigate = useNavigate();
 
     const fetchWorkList = async () => {
         const res = await GetWork();
         if (res) {
             setWorks(res);
+            setSelectedWork(res[0]);
         } else {
             messageApi.error("ไม่สามารถดึงข้อมูลงานได้");
         }
@@ -45,16 +47,6 @@ const WorkView = () => {
     useEffect(() => {
         fetchWorkList();
     }, []);
-
-    const showModal = (work: WorkInterface) => {
-        setSelectedWork(work);
-        setIsModalVisible(true);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedWork(null);
-        setIsModalVisible(false);
-    };
 
     const filteredWorks = works.filter((work) => {
         const matchesSearch = (work.title || "").toLowerCase().includes(searchText.toLowerCase());
@@ -69,19 +61,20 @@ const WorkView = () => {
         return matchesSearch && matchesType && matchesStatus;
     });
 
+    const paginatedWorks = filteredWorks.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
     return (
         <>
             <Navbar />
-            <Layout style={{ backgroundColor: "#F9F7F7", minHeight: "100vh" }}>
-                <Content style={{ padding: "24px" }}>
+            <Layout style={{ backgroundColor: "#F9F7F7", minHeight: "100vh", overflow: "hidden" }}>
+                <Content style={{ padding: 24, height: "calc(100vh - 64px)", overflow: "hidden" }}>
                     {contextHolder}
 
-                    {/* ✅ Banner & Search */}
                     <div
                         style={{
                             position: "relative",
-                            marginBottom: 32,
-                            borderRadius: 16,
+                            marginBottom: 24,
+                            borderRadius: 4,
                             overflow: "hidden",
                             boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
                         }}
@@ -89,7 +82,7 @@ const WorkView = () => {
                         <img
                             src={bannerImage}
                             alt="Banner"
-                            style={{ width: "100%", maxHeight: 300, objectFit: "cover" }}
+                            style={{ width: "100%", maxHeight: 1200, objectFit: "cover" }}
                         />
                         <div
                             style={{
@@ -97,13 +90,12 @@ const WorkView = () => {
                                 top: "50%",
                                 left: "50%",
                                 transform: "translate(-50%, -50%)",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: "12px",
-                                background: "rgba(255, 255, 255, 0.9)",
+                                background: "rgba(243, 243, 243, 0.2)",
                                 padding: "20px 24px",
-                                borderRadius: 12,
-                                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                                borderRadius: 10,
+                                display: "flex",
+                                gap: 16,
+                                flexWrap: "wrap",
                             }}
                         >
                             <Search
@@ -134,140 +126,117 @@ const WorkView = () => {
                         </div>
                     </div>
 
-                    <Title
-                        level={3}
-                        style={{ color: "#112D4E", marginBottom: 24, textAlign: "center" }}
-                    >
-                        🏠 รายการงานทั้งหมด
-                    </Title>
-
-                    <Row gutter={[24, 24]} justify="center">
-                        {filteredWorks.map((work) => (
-                            <Col key={work.ID} xs={24} sm={12} md={8} lg={6}>
-                               <Card
-  hoverable
-  cover={
-    <img
-      alt={work.title || ""}
-      src={work.photo || ""}
-      style={{
-        height: 160,
-        objectFit: "cover",
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-      }}
-    />
-  }
-  style={{
-    borderRadius: 12,
-    background: "#ffffff",
-    position: "relative",
-  }}
-  bodyStyle={{ padding: 16 }}
->
-  <Title level={5} style={{ marginBottom: 8 }}>
-    {work.title || "-"}
-  </Title>
-  <Paragraph ellipsis={{ rows: 2 }}>
-    {work.description || "-"}
-  </Paragraph>
-  <Paragraph style={{ fontSize: 12, marginBottom: 4 }}>
-    📍 {work.place || "-"}
-  </Paragraph>
-  <Paragraph style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>
-    🕒 {work.worktime ? new Date(work.worktime).toLocaleString("th-TH") : "-"}
-  </Paragraph>
-  <Paragraph style={{ fontSize: 12, marginBottom: 4 }}>
-    👥 สมัครแล้ว {work.workuse ?? 0} / {work.workcount ?? 0} คน
-  </Paragraph>
-
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginTop: 12,
-    }}
-  >
-    <Tag
-      color={work.workstatus_id === 1 ? "#3F72AF" : "#FF4D4F"}
-      style={{ fontWeight: "bold", borderRadius: 8 }}
-    >
-      {work.workstatus_id === 1
-        ? "📢 เปิดรับสมัคร"
-        : "🔒 ปิดรับสมัคร"}
-    </Tag>
-
-    <button
-      onClick={() => showModal(work)}
-      style={{
-        backgroundColor: "#2D9CDB",
-        color: "#fff",
-        border: "none",
-        padding: "6px 12px",
-        borderRadius: 8,
-        fontWeight: "bold",
-        fontSize: 13,
-        cursor: "pointer",
-      }}
-    >
-      ℹ️ รายละเอียดงาน
-    </button>
-  </div>
-</Card>
-
-                            </Col>
-                        ))}
-                    </Row>
-
-                    {/* ✅ Modal แสดงรายละเอียดงาน */}
-                    <Modal
-                        title={selectedWork?.title || "รายละเอียดงาน"}
-                        open={isModalVisible}
-                        onCancel={handleCloseModal}
-                        footer={null}
-                        centered
-                        width={600}
-                    >
-                        {selectedWork && (
-                            <div>
-                                <img
-                                    src={selectedWork.photo || ""}
-                                    alt="Work"
-                                    style={{
-                                        width: "100%",
-                                        maxHeight: 250,
-                                        objectFit: "cover",
-                                        borderRadius: 8,
-                                        marginBottom: 16,
-                                    }}
-                                />
-                                <Paragraph><strong>รายละเอียด:</strong> {selectedWork.description || "-"}</Paragraph>
-                                <Paragraph><strong>สถานที่:</strong> {selectedWork.place || "-"}</Paragraph>
-                                <Paragraph><strong>เวลา:</strong> {selectedWork.worktime ? new Date(selectedWork.worktime).toLocaleString("th-TH") : "-"}</Paragraph>
-                                <Paragraph><strong>สมัครแล้ว:</strong> {selectedWork.workuse ?? 0} / {selectedWork.workcount ?? 0}</Paragraph>
-                                <Paragraph>
-                                    <strong>สถานะ:</strong>{" "}
-                                    {selectedWork.workstatus_id === 1 ? (
-                                        <Tag color="#3F72AF">📢 เปิดรับสมัคร</Tag>
-                                    ) : (
-                                        <Tag color="#FF4D4F">🔒 ปิดรับสมัคร</Tag>
-                                    )}
-                                </Paragraph>
-
-                                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>
-                                    <Button
-                                        type="primary"
-                                        onClick={() => navigate(`/work/edit/${selectedWork.ID}`)}
-                                        disabled={selectedWork.workstatus_id !== 1}
-                                        style={{ backgroundColor: "#F4A261", borderColor: "#F4A261" }}
+                    <Row gutter={24} style={{ height: "calc(100vh - 400px)" }}>
+                        <Col xs={24} md={10} lg={8} style={{ height: "100%", overflowY: "auto" }}>
+                            <Title level={4}>📋 รายการงาน</Title>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                                {paginatedWorks.map((work) => (
+                                    <Card
+                                        key={work.ID}
+                                        hoverable
+                                        onClick={() => setSelectedWork(work)}
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "flex-start",
+                                            gap: 16,
+                                            borderRadius: 8,
+                                            backgroundColor: selectedWork?.ID === work.ID ? "#E3F2FD" : "#fff",
+                                            border: selectedWork?.ID === work.ID ? "2px solid #2196F3" : "1px solid #f0f0f0",
+                                            cursor: "pointer",
+                                        }}
+                                        bodyStyle={{ padding: 12 }}
                                     >
-                                        ❤ ลงทะเบียน
-                                    </Button>
-                                </div>
+                                        <img
+                                            alt={work.title || ""}
+                                            src={work.photo || ""}
+                                            style={{
+                                                width: 80,
+                                                height: 80,
+                                                objectFit: "cover",
+                                                borderRadius: 8,
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                                            <div style={{ marginBottom: 8 }}>
+                                                <Title level={5} style={{ margin: 0 }}>{work.title || "-"}</Title>
+                                                <Paragraph style={{ fontSize: 12, margin: 0 }} ellipsis={{ rows: 2 }}>
+                                                    {work.description || "-"}
+                                                </Paragraph>
+                                            </div>
+                                            <div style={{ fontSize: 12, color: "#555" }}>
+                                                <div>📍 {work.place || "-"}</div>
+                                                <div>🕒 {work.worktime ? new Date(work.worktime).toLocaleString("th-TH") : "-"}</div>
+                                                <div>👥 {work.workuse ?? 0} / {work.workcount ?? 0} คน</div>
+                                                <Tag
+                                                    color={work.workstatus_id === 1 ? "green" : "red"}
+                                                    style={{ fontWeight: "bold", borderRadius: 4, marginTop: 4 }}
+                                                >
+                                                    {work.workstatus_id === 1 ? "📢 เปิดรับสมัคร" : "🔒 ปิดรับสมัคร"}
+                                                </Tag>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                ))}
+                                <Pagination
+                                    current={currentPage}
+                                    pageSize={pageSize}
+                                    total={filteredWorks.length}
+                                    onChange={(page) => setCurrentPage(page)}
+                                    style={{ marginTop: 16, textAlign: "center" }}
+                                />
                             </div>
-                        )}
-                    </Modal>
+                        </Col>
+
+                        <Col xs={24} md={14} lg={16} style={{ height: "100%", overflowY: "hidden" }}>
+                            <Title level={4}>🧾 รายละเอียดงาน</Title>
+                            {selectedWork ? (
+                                <Card style={{ borderRadius: 12 }}>
+                                    <img
+                                        src={selectedWork.photo || ""}
+                                        alt="Work"
+                                        style={{
+                                            width: "100%",
+                                            maxHeight: 300,
+                                            objectFit: "cover",
+                                            borderRadius: 8,
+                                            marginBottom: 16,
+                                        }}
+                                    />
+                                    <Title level={5}>{selectedWork.title}</Title>
+                                    <Paragraph>
+                                        <strong>รายละเอียด:</strong> {selectedWork.description || "-"}
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <strong>สถานที่:</strong> {selectedWork.place || "-"}
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <strong>เวลา:</strong> {selectedWork.worktime ? new Date(selectedWork.worktime).toLocaleString("th-TH") : "-"}
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <strong>จำนวนที่สมัครแล้ว:</strong> {selectedWork.workuse ?? 0} / {selectedWork.workcount ?? 0}
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <strong>สถานะ:</strong> <Tag color={selectedWork.workstatus_id === 1 ? "green" : "red"}>
+                                            {selectedWork.workstatus_id === 1 ? "📢 เปิดรับสมัคร" : "🔒 ปิดรับสมัคร"}
+                                        </Tag>
+                                    </Paragraph>
+                                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                                        <Button
+                                            type="primary"
+                                            onClick={() => navigate(`/work/apply/${selectedWork.ID}`)}
+                                            disabled={selectedWork.workstatus_id !== 1}
+                                            style={{ backgroundColor: "#F4A261", borderColor: "#F4A261" }}
+                                        >
+                                            ❤ ลงทะเบียน
+                                        </Button>
+                                    </div>
+                                </Card>
+                            ) : (
+                                <Paragraph>กรุณาเลือกงานจากด้านซ้าย</Paragraph>
+                            )}
+                        </Col>
+                    </Row>
                 </Content>
             </Layout>
         </>

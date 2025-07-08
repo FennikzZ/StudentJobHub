@@ -9,6 +9,7 @@ import {
   Divider,
   message,
   Layout,
+  Modal,
 } from "antd";
 import {
   PlusOutlined,
@@ -40,17 +41,26 @@ const WorkTablePage = () => {
     }
   };
 
-  const handleDelete = async (id?: number) => {
+  const handleDelete = async (id?: number, title?: string) => {
     if (!id) return;
-    const confirmed = window.confirm("คุณแน่ใจว่าต้องการลบงานนี้ใช่หรือไม่?");
-    if (!confirmed) return;
-    const res = await DeleteWorkByID(id);
-    if (res) {
-      messageApi.success("ลบงานสำเร็จ");
-      fetchWorkList();
-    } else {
-      messageApi.error("ไม่สามารถลบงานได้");
-    }
+
+    Modal.confirm({
+      title: "คุณแน่ใจหรือไม่?",
+      content: `คุณต้องการลบงาน "${title || "นี้"}" ใช่หรือไม่?`,
+      okText: "ลบ",
+      okType: "danger",
+      cancelText: "ยกเลิก",
+      centered: true,
+      onOk: async () => {
+        const res = await DeleteWorkByID(id);
+        if (res) {
+          messageApi.success("ลบงานสำเร็จ");
+          fetchWorkList();
+        } else {
+          messageApi.error("ไม่สามารถลบงานได้");
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -59,13 +69,13 @@ const WorkTablePage = () => {
 
   const columns = [
     {
-      title: "ลำดับ",
-      dataIndex: "ID",
-      key: "ID",
-      width: 60,
-      fixed: 'left' as const,
-      align: 'center' as const,
-    },
+  title: "ลำดับ",
+  key: "index",
+  width: 60,
+  align: "center" as const,
+  render: (_: any, __: any, index: number) => index + 1,
+}
+,
     {
       title: "รูปภาพ",
       dataIndex: "photo",
@@ -163,7 +173,7 @@ const WorkTablePage = () => {
           <Button
             icon={<DeleteOutlined />}
             danger
-            onClick={() => handleDelete(record.ID)}
+            onClick={() => handleDelete(record.ID, record.title)}
             className={styles.deleteButton}
           >
             ลบ
@@ -205,7 +215,7 @@ const WorkTablePage = () => {
               bordered
               columns={columns}
               dataSource={works.map((item) => ({ ...item, key: item.ID?.toString() }))}
-              pagination={{ pageSize: 5 }}
+              pagination={{ pageSize: 10 }}
               scroll={{ x: "max-content" }}
             />
           </Card>

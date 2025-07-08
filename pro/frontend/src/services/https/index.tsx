@@ -1,5 +1,6 @@
 import { UsersInterface } from "../../interfaces/IUser";
 import { WorkInterface } from "../../interfaces/IWork";
+import { DashboardInterface } from "../../interfaces/IDashboard";
 
 const apiUrl = "http://localhost:8000";
 
@@ -208,6 +209,99 @@ async function DeleteWorkByID(id: Number | undefined) {
   return res;
 }
 
+//dashboard
+async function CreateDashboard(data: DashboardInterface) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  };
+
+  let res = await fetch(`${apiUrl}/dashboard`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function GetDashboard() {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  let res = await fetch(`${apiUrl}/dashboard`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function GetDashboardById(id: Number | undefined) {
+  const requestOptions = {
+    method: "GET"
+  };
+
+  let res = await fetch(`${apiUrl}/dashboard/${id}`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function UpdateDashboard(data: DashboardInterface) {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  };
+
+  let res = await fetch(`${apiUrl}/dashboard`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
+async function DeleteDashboardByID(id: Number | undefined) {
+  const requestOptions = {
+    method: "DELETE"
+  };
+
+  let res = await fetch(`${apiUrl}/dashboard/${id}`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
 export {
   GetUsers,
   CreateUser,
@@ -215,9 +309,16 @@ export {
   DeleteUserByID,
   GetUserById,
   UpdateUser,
+  //work
   CreateWork,
   GetWork,
   GetWorkById,
   UpdateWork,
   DeleteWorkByID,
+  //dashboard
+  CreateDashboard,
+  GetDashboard,
+  GetDashboardById,
+  UpdateDashboard,
+  DeleteDashboardByID,
 };
