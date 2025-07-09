@@ -10,6 +10,8 @@ import {
   message,
   Layout,
   Modal,
+  Input,
+  Select,
 } from "antd";
 import {
   PlusOutlined,
@@ -17,6 +19,7 @@ import {
   CloseCircleTwoTone,
   EditOutlined,
   DeleteOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { WorkInterface } from "../../interfaces/IWork";
@@ -26,9 +29,15 @@ import styles from "./WorkTablePage.module.css";
 
 const { Title } = Typography;
 const { Content } = Layout;
+const { Option } = Select;
 
 const WorkTablePage = () => {
   const [works, setWorks] = useState<WorkInterface[]>([]);
+  const [filteredWorks, setFilteredWorks] = useState<WorkInterface[]>([]);
+  const [searchTitle, setSearchTitle] = useState("");
+  const [statusFilter, setStatusFilter] = useState<number | null>(null);
+  const [typeFilter, setTypeFilter] = useState<number | null>(null);
+
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -36,6 +45,7 @@ const WorkTablePage = () => {
     const res = await GetWork();
     if (res) {
       setWorks(res);
+      setFilteredWorks(res);
     } else {
       messageApi.error("ไม่สามารถดึงข้อมูลงานได้");
     }
@@ -67,15 +77,34 @@ const WorkTablePage = () => {
     fetchWorkList();
   }, []);
 
+  useEffect(() => {
+    let filtered = works;
+
+    if (searchTitle.trim() !== "") {
+      filtered = filtered.filter((w) =>
+        w.title?.toLowerCase().includes(searchTitle.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== null) {
+      filtered = filtered.filter((w) => w.workstatus_id === statusFilter);
+    }
+
+    if (typeFilter !== null) {
+      filtered = filtered.filter((w) => w.worktype_id === typeFilter);
+    }
+
+    setFilteredWorks(filtered);
+  }, [searchTitle, statusFilter, typeFilter, works]);
+
   const columns = [
     {
-  title: "ลำดับ",
-  key: "index",
-  width: 60,
-  align: "center" as const,
-  render: (_: any, __: any, index: number) => index + 1,
-}
-,
+      title: "ลำดับ",
+      key: "index",
+      width: 60,
+      align: "center" as const,
+      render: (_: any, __: any, index: number) => index + 1,
+    },
     {
       title: "รูปภาพ",
       dataIndex: "photo",
@@ -193,10 +222,58 @@ const WorkTablePage = () => {
         <Content className={styles.content}>
           {contextHolder}
           <Card className={styles.card}>
-            <Row justify="space-between" align="middle">
-              <Col>
-                <Title level={3} className={styles.pageTitle}>รายการงานทั้งหมด</Title>
+            {/* Title + Filters + Button in same row */}
+            <Row
+              justify="space-between"
+              align="middle"
+              style={{
+                flexWrap: "wrap",
+                rowGap: 12,
+                columnGap: 12,
+                marginBottom: 16,
+              }}
+            >
+              <Col flex="1 1 200px">
+                <Title level={3} className={styles.pageTitle} style={{ marginBottom: 0 }}>
+                  รายการงานทั้งหมด
+                </Title>
               </Col>
+
+              <Col flex="1 1 100px">
+                <Input
+                  placeholder="ค้นหาหัวข้องาน"
+                  prefix={<SearchOutlined />}
+                  value={searchTitle}
+                  onChange={(e) => setSearchTitle(e.target.value)}
+                />
+              </Col>
+
+              <Col flex="1 1 10px">
+                <Select
+                  placeholder="เลือกสถานะงาน"
+                  allowClear
+                  style={{ width: "100%" }}
+                  value={statusFilter ?? undefined}
+                  onChange={(value) => setStatusFilter(value ?? null)}
+                >
+                  <Option value={1}>เปิดรับสมัคร</Option>
+                  <Option value={2}>ปิดรับสมัคร</Option>
+                </Select>
+              </Col>
+
+              <Col flex="1 1 10px">
+                <Select
+                  placeholder="เลือกประเภทงาน"
+                  allowClear
+                  style={{ width: "100%" }}
+                  value={typeFilter ?? undefined}
+                  onChange={(value) => setTypeFilter(value ?? null)}
+                >
+                  <Option value={1}>ค่าตอบแทน</Option>
+                  <Option value={2}>จิตอาสา</Option>
+                </Select>
+              </Col>
+
               <Col>
                 <Button
                   type="primary"
@@ -214,7 +291,7 @@ const WorkTablePage = () => {
             <Table
               bordered
               columns={columns}
-              dataSource={works.map((item) => ({ ...item, key: item.ID?.toString() }))}
+              dataSource={filteredWorks.map((item) => ({ ...item, key: item.ID?.toString() }))}
               pagination={{ pageSize: 10 }}
               scroll={{ x: "max-content" }}
             />

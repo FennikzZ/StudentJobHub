@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "antd";
+import "leaflet/dist/leaflet.css";
 
 import Home from "./pages/home";
 import Work from "./pages/work";

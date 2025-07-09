@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <Layout style={{ backgroundColor: "#f0f2f5", minHeight: "100vh" }}>
+      <Layout style={{ backgroundColor: "#F9F7F7", minHeight: "100vh" }}>
         <Content style={{ padding: "24px" }}>
           <Row gutter={[16, 16]}>
             {/* Banner Section */}

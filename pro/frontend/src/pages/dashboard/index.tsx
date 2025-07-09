@@ -10,11 +10,13 @@ import {
   message,
   Layout,
   Modal,
+  Input,
 } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { DashboardInterface } from "../../interfaces/IDashboard";
@@ -30,6 +32,9 @@ const { Content } = Layout;
 
 const DashboardTablePage = () => {
   const [dashboards, setDashboards] = useState<DashboardInterface[]>([]);
+  const [filteredDashboards, setFilteredDashboards] = useState<DashboardInterface[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -37,6 +42,7 @@ const DashboardTablePage = () => {
     const res = await GetDashboard();
     if (res) {
       setDashboards(res);
+      setFilteredDashboards(res);
     } else {
       messageApi.error("ไม่สามารถโหลดข้อมูลกระดานข่าวได้");
     }
@@ -68,15 +74,22 @@ const DashboardTablePage = () => {
     fetchDashboardList();
   }, []);
 
+  useEffect(() => {
+    const filtered = dashboards.filter((d) =>
+  d.subject?.toLowerCase().includes(searchKeyword.toLowerCase())
+);
+
+    setFilteredDashboards(filtered);
+  }, [searchKeyword, dashboards]);
+
   const columns = [
     {
-  title: "ลำดับ",
-  key: "index",
-  width: 60,
-  align: "center" as const,
-  render: (_: any, __: any, index: number) => index + 1,
-}
-,
+      title: "ลำดับ",
+      key: "index",
+      width: 60,
+      align: "center" as const,
+      render: (_: any, __: any, index: number) => index + 1,
+    },
     {
       title: "รูปภาพ",
       dataIndex: "image",
@@ -152,12 +165,27 @@ const DashboardTablePage = () => {
         <Content className={styles.content}>
           {contextHolder}
           <Card className={styles.card}>
-            <Row justify="space-between" align="middle">
-              <Col>
-                <Title level={3} className={styles.pageTitle}>
+            {/* Row: title, search, button */}
+            <Row
+              justify="space-between"
+              align="middle"
+              style={{ flexWrap: "wrap", gap: 12, marginBottom: 16 }}
+            >
+              <Col flex="1 1 200px">
+                <Title level={3} className={styles.pageTitle} style={{ marginBottom: 0 }}>
                   รายการข่าวประชาสัมพันธ์
                 </Title>
               </Col>
+
+              <Col flex="0 0 250px">
+                <Input
+                  placeholder="ค้นหาหัวข้อข่าว"
+                  prefix={<SearchOutlined />}
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                />
+              </Col>
+
               <Col>
                 <Button
                   type="primary"
@@ -175,7 +203,7 @@ const DashboardTablePage = () => {
             <Table
               bordered
               columns={columns}
-              dataSource={dashboards.map((item) => ({
+              dataSource={filteredDashboards.map((item) => ({
                 ...item,
                 key: item.ID?.toString(),
               }))}

@@ -38,7 +38,7 @@ const LocationPicker = ({ onSelect }: { onSelect: (lat: number, lng: number) => 
   return null;
 };
 
-const WorkEdit = () => {
+const WorkCreate = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -292,4 +292,4 @@ const WorkEdit = () => {
   );
 };
 
-export default WorkEdit;
+export default WorkCreate;
