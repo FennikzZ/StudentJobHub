@@ -18,4 +18,6 @@ type User struct {
 	// GenderID ทำหน้าที่เป็น FK
 	GenderID uint
 	Gender   Gender `gorm:"foriegnKey:GenderID"`
+
+	WorkHistories []WorkHistory `gorm:"foreignKey:UserID"`
 }

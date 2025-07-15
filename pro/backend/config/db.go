@@ -37,6 +37,7 @@ func SetupDatabase() {
 		&entity.Work{},
 		&entity.WorkType{},
 		&entity.WorkStatus{},
+		&entity.WorkHistory{},
 		//dashboard
 		&entity.Dashboard{},
 	)

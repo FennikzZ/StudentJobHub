@@ -15,14 +15,13 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../../components/Navbar/Navbar";
-import { GetWork } from "../../../services/https";
+import { GetWork, RegisterWork } from "../../../services/https";
 import { WorkInterface } from "../../../interfaces/IWork";
 import bannerImage from "../../../assets/bannerblue.png";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// ✅ Import icon images as modules
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
@@ -31,13 +30,11 @@ const { Title, Paragraph } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
-// ✅ Set default Leaflet marker icons
 L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
 });
 
-// ✅ Map refresher when modal opens
 const MapRefresher = () => {
   const map = useMap();
   useEffect(() => {
@@ -57,6 +54,7 @@ const WorkView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
   const navigate = useNavigate();
+  const userId = Number(localStorage.getItem("user_id"));
 
   const fetchWorkList = async () => {
     const res = await GetWork();
@@ -64,6 +62,22 @@ const WorkView = () => {
       setWorks(res);
     } else {
       messageApi.error("ไม่สามารถดึงข้อมูลงานได้");
+    }
+  };
+
+  const handleRegister = async (workId: number | undefined) => {
+    if (!workId || !userId) {
+      messageApi.error("ไม่สามารถลงทะเบียนได้: ไม่พบข้อมูลผู้ใช้หรือรหัสงาน");
+      return;
+    }
+
+    try {
+      const result = await RegisterWork(workId, userId);
+      messageApi.success("ลงทะเบียนสำเร็จ!");
+      fetchWorkList();
+      setModalVisible(false);
+    } catch (error: any) {
+      messageApi.error(`ลงทะเบียนล้มเหลว: ${error.message}`);
     }
   };
 
@@ -141,36 +155,57 @@ const WorkView = () => {
             {paginatedWorks.map((work) => (
               <Col xs={24} sm={12} lg={8} key={work.ID}>
                 <Card
-                  hoverable
-                  onClick={() => {
-                    setSelectedWork(work);
-                    setModalVisible(true);
-                  }}
-                  bodyStyle={{ padding: 16 }}
-                >
-                  <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                    <img
-                      alt={work.title}
-                      src={work.photo || ""}
-                      style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8 }}
-                    />
-                    <Title level={5} style={{ margin: 0 }}>
-                      {work.title}
-                    </Title>
-                  </div>
-                  <Paragraph style={{ marginTop: 8 }} ellipsis={{ rows: 2 }}>
-                    {work.description}
-                  </Paragraph>
-                  <Paragraph style={{ fontSize: 13, marginBottom: 4 }}>
-                    🕒 {new Date(work.worktime || "").toLocaleString("th-TH")}
-                  </Paragraph>
-                  <Paragraph style={{ fontSize: 13, marginBottom: 4 }}>
-                    👥 {work.workuse ?? 0} / {work.workcount ?? 0} คน
-                  </Paragraph>
-                  <Tag color={work.workstatus_id === 1 ? "green" : "red"}>
-                    {work.workstatus_id === 1 ? "📢 เปิดรับสมัคร" : "🔒 ปิดรับสมัคร"}
-                  </Tag>
-                </Card>
+  hoverable
+  onClick={() => {
+    setSelectedWork(work);
+    setModalVisible(true);
+  }}
+  bodyStyle={{ padding: 16 }}
+>
+  <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+    <img
+      alt={work.title}
+      src={work.photo || ""}
+      style={{
+        width: 50,
+        height: 50,
+        objectFit: "cover",
+        borderRadius: "50%", // ทำให้เป็นวงกลม
+        border: "2px solid #eee",
+      }}
+    />
+    <div>
+      <Title level={5} style={{ margin: 0 }}>
+        {work.title}
+      </Title>
+      <Paragraph style={{ margin: "4px 0", fontSize: 13 }}>
+        {work.description}
+      </Paragraph>
+    </div>
+  </div>
+
+  <div style={{ marginTop: 12 }}>
+    <Paragraph style={{ fontSize: 13, marginBottom: 4 }}>
+      🕒 <strong>วันเวลา:</strong>{" "}
+      {new Date(work.worktime || "").toLocaleString("th-TH")}
+    </Paragraph>
+    <Paragraph style={{ fontSize: 13, marginBottom: 4 }}>
+      👥 <strong>จำนวนที่รับ:</strong> {work.workuse ?? 0} / {work.workcount ?? 0} คน
+    </Paragraph>
+    <Paragraph style={{ fontSize: 13, marginBottom: 4 }}>
+      🏷️ <strong>ประเภทงาน:</strong>{" "}
+      {work.worktype_id === 1 ? "💵 งานค่าตอบแทน" : "💖 งานจิตอาสา"}
+    </Paragraph>
+
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Tag color={work.workstatus_id === 1 ? "green" : "red"}>
+        {work.workstatus_id === 1 ? "📢 เปิดรับสมัคร" : "❌ ปิดรับสมัคร"}
+      </Tag>
+
+    </div>
+  </div>
+</Card>
+
               </Col>
             ))}
           </Row>
@@ -221,8 +256,7 @@ const WorkView = () => {
                         : "-"}
                     </Paragraph>
                     <Paragraph>
-                      👥 <strong>จำนวนสมัครแล้ว:</strong> {selectedWork.workuse ?? 0} /{" "}
-                      {selectedWork.workcount ?? 0}
+                      👥 <strong>จำนวนสมัครแล้ว:</strong> {selectedWork.workuse ?? 0} / {selectedWork.workcount ?? 0}
                     </Paragraph>
                     <Paragraph>
                       🏷️ <strong>ประเภทงาน:</strong>{" "}
@@ -244,7 +278,6 @@ const WorkView = () => {
                         {selectedWork.workstatus_id === 1 ? "📢 เปิดรับสมัคร" : "❌ ปิดรับสมัคร"}
                       </Tag>
                     </Paragraph>
-
                   </Col>
 
                   <Col xs={24} md={10}>
@@ -267,9 +300,7 @@ const WorkView = () => {
                           attribution='&copy; <a href="https://osm.org">OpenStreetMap</a>'
                           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-                        <Marker
-                          position={[selectedWork.latitude ?? 0, selectedWork.longitude ?? 0]}
-                        />
+                        <Marker position={[selectedWork.latitude ?? 0, selectedWork.longitude ?? 0]} />
                       </MapContainer>
                     </div>
                   </Col>
@@ -278,7 +309,7 @@ const WorkView = () => {
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>
                   <Button
                     type="primary"
-                    onClick={() => navigate(`/work/apply/${selectedWork.ID}`)}
+                    onClick={() => handleRegister(selectedWork.ID)}
                     disabled={selectedWork.workstatus_id !== 1}
                     style={{ backgroundColor: "#3F72AF", borderColor: "#3F72AF" }}
                   >

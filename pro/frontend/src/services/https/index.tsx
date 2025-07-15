@@ -1,6 +1,8 @@
 import { UsersInterface } from "../../interfaces/IUser";
 import { WorkInterface } from "../../interfaces/IWork";
 import { DashboardInterface } from "../../interfaces/IDashboard";
+import { WorkHistoryInterface } from "../../interfaces/IHistorywork";
+
 
 const apiUrl = "http://localhost:8000";
 
@@ -209,6 +211,25 @@ async function DeleteWorkByID(id: Number | undefined) {
   return res;
 }
 
+async function RegisterWork(workId: number, userId: number) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId }),
+  };
+
+  let res = await fetch(`${apiUrl}/work/register/${workId}`, requestOptions)
+    .then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
 //dashboard
 async function CreateDashboard(data: DashboardInterface) {
   const requestOptions = {
@@ -315,6 +336,7 @@ export {
   GetWorkById,
   UpdateWork,
   DeleteWorkByID,
+  RegisterWork,
   //dashboard
   CreateDashboard,
   GetDashboard,

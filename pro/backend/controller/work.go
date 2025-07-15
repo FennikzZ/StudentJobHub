@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"time"
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/tanapon395/sa-67-example/config"
@@ -102,4 +103,74 @@ func DeleteWork(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Work deleted successfully"})
+}
+
+type RegisterPayload struct {
+	UserID uint `json:"user_id"`
+}
+
+func RegisterWork(c *gin.Context) {
+	id := c.Param("id") // รับ work id จาก URL
+	db := config.DB()
+
+	var work entity.Work
+	if err := db.First(&work, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Work not found"})
+		return
+	}
+
+	// รับ user_id จาก body
+	var payload RegisterPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing or invalid user_id"})
+		return
+	}
+
+	// ตรวจสอบว่าจำนวนคนเต็มหรือยัง
+	if work.WorkUse >= work.WorkCount {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Work is full, cannot register"})
+		return
+	}
+
+	// ตรวจสอบเวลา
+	now := time.Now()
+	if now.After(work.WorkTime) || now.Equal(work.WorkTime) {
+		work.WorkStatusID = 2 // งานหมดเวลา
+		db.Save(&work)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Work is already started or passed"})
+		return
+	}
+
+	// เพิ่มจำนวนผู้ใช้
+	work.WorkUse += 1
+	if err := db.Save(&work).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update work usage"})
+		return
+	}
+
+	// เตรียมค่าลงใน WorkHistory
+	workHistory := entity.WorkHistory{
+		UserID: payload.UserID,
+		WorkID: work.ID,
+	}
+
+	// ใส่ค่า paid หรือ volunteer ตามประเภท
+	if work.WorkTypeID == 1 && work.Paid != nil {
+		workHistory.PaidAmount = work.Paid
+	}
+	if work.WorkTypeID == 2 && work.Volunteer != nil {
+		workHistory.VolunteerHour = work.Volunteer
+	}
+
+	// บันทึก WorkHistory
+	if err := db.Create(&workHistory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to record work history"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Registered successfully",
+		"workuse":     work.WorkUse,
+		"workhistory": workHistory,
+	})
 }
